@@ -13,6 +13,12 @@
                 </svg>
             </div>
         @endif
+        <div class="col-auto">
+            <button wire:click="esporta" type="button" class="btn btn-primary">Esporta</button>
+        </div>
+        <div class="col-auto">
+            <button wire:click="resetRicerca" type="button" class="btn btn-warning">Reset</button>
+        </div>
     </div>
 
     <div class="table-responsive">
