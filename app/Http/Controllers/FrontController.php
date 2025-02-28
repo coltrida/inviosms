@@ -168,18 +168,6 @@ class FrontController extends Controller
         ]);
     }
 
-    public function ricercaAnagrafica(Request $request)
-    {
-        return view('clienti.clienti', [
-            'clients' => Client::withCount('appointments', 'phones')
-                ->where('nome', 'like', '%'. strtoupper($request->cerca) .'%')
-                ->orWhere('cognome', 'like', '%'.strtoupper($request->cerca).'%')
-                ->orWhere('fullname', 'like', '%'.strtoupper($request->cerca).'%')
-                ->paginate(10)->withQueryString(),
-            'testoRicerca' => $request->cerca
-        ]);
-    }
-
     public function verifiche()
     {
         return view('verifiche.verifiche');
@@ -228,31 +216,6 @@ class FrontController extends Controller
 
     public function capStrutture()
     {
-        return view('capStrutture', [
-            'strutture' => Strutture::with('caps')
-                ->orderBy('tipo')
-                ->orderBy('citta')
-                ->paginate(10)
-        ]);
-    }
-
-    public function ricercaStruttura(Request $request)
-    {
-        return view('capStrutture', [
-            'strutture' => Strutture::with('caps')
-                ->where('nome', 'like', '%'. strtoupper($request->cerca) .'%')
-                ->paginate(10)->withQueryString(),
-            'testoRicerca' => $request->cerca
-        ]);
-    }
-
-    public function associacap(Request $request)
-    {
-        Strutturecap::create([
-            'strutture_id' => $request->idStruttura,
-            'cap' => $request->cap
-        ]);
-
-        return Redirect::back();
+        return view('strutture.capStrutture');
     }
 }

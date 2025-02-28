@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
+// ----- php artisan queue:work ------//
+
 Route::get('/', [\App\Http\Controllers\FrontController::class, 'inizio'])->name('inizio');
 
 //------------------- nav bar ----------------------------//
@@ -26,11 +28,9 @@ Route::get('/doppioni', [\App\Http\Controllers\FrontController::class, 'doppioni
 Route::get('/senzaNumero', [\App\Http\Controllers\FrontController::class, 'senzaNumero'])->name('senzaNumero');
 
 //------------------- clienti ------------------------------//
-Route::get('/ricercaAnagrafica', [\App\Http\Controllers\FrontController::class, 'ricercaAnagrafica'])->name('ricercaAnagrafica');
+Route::get('/clientiAppuntamenti/{idClient}', [\App\Http\Controllers\FrontController::class, 'clientiAppuntamenti'])->name('clienti.appuntamenti');
+Route::get('/clientiTelefonate/{idClient}', [\App\Http\Controllers\FrontController::class, 'clientiTelefonate'])->name('clienti.telefonate');
 
-//------------------- strutture ------------------------------//
-Route::get('/ricercaStruttura', [\App\Http\Controllers\FrontController::class, 'ricercaStruttura'])->name('ricercaStruttura');
-Route::post('/associacap', [\App\Http\Controllers\FrontController::class, 'associacap'])->name('associacap');
 
 
 Route::view('dashboard', 'dashboard')
