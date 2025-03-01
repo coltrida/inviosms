@@ -15,15 +15,14 @@ class importPhonesJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, \Illuminate\Bus\Queueable, SerializesModels;
 
-    protected $filePath;
     public $timeout = 3600; // 1 ora
 
     /**
      * Create a new job instance.
      */
-    public function __construct($filePath)
+    public function __construct()
     {
-        $this->filePath = $filePath;
+
     }
 
     /**
@@ -31,7 +30,11 @@ class importPhonesJob implements ShouldQueue
      */
     public function handle(): void
     {
-        Excel::import(new PhoneImport, $this->filePath);
+        $path = '/home/vagrant/CRM/tt.xlsx';
+        $originalPath = file_get_contents($path); // Leggi il contenuto del file
+        file_put_contents(storage_path('app/private/temp/tt.xlsx'), $originalPath); // Scrivi nella destinazione
+
+        Excel::import(new PhoneImport, storage_path('app/private/temp/tt.xlsx'));
 
         $path = storage_path('app/private/temp');
         \File::deleteDirectory($path);

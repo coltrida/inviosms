@@ -62,7 +62,7 @@ class ListaClienti extends Component
             })
             ->when($this->store_id, fn ($query) => $query->where('strutture_id', $this->store_id))
             ->when($this->tipo, fn ($query) => $query->where('tipo', $this->tipo))
-            ->paginate(10);
+            ->paginate(7);
 
         return view('livewire.clienti.lista-clienti', [
             'clients' => $clients,

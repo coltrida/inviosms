@@ -15,15 +15,14 @@ class importStruttureJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, \Illuminate\Bus\Queueable, SerializesModels;
 
-    protected $filePath;
     public $timeout = 3600; // 1 ora
 
     /**
      * Create a new job instance.
      */
-    public function __construct($filePath)
+    public function __construct()
     {
-        $this->filePath = $filePath;
+
     }
 
     /**
@@ -31,12 +30,10 @@ class importStruttureJob implements ShouldQueue
      */
     public function handle(): void
     {
-        Excel::import(new StrutturaImport, $this->filePath);
+        $path = '/home/vagrant/CRM/store.xlsx';
+        $originalPath = file_get_contents($path); // Leggi il contenuto del file
+        file_put_contents(storage_path('app/private/temp/store.xlsx'), $originalPath); // Scrivi nella destinazione
 
-        $path = storage_path('app/private/temp');
-        \File::deleteDirectory($path);
-
-        // Emetti l'evento per il frontend
-        broadcast(new ImportCompleted());
+        Excel::import(new StrutturaImport, storage_path("app/private/temp/store.xlsx"));
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\ClientsExport;
 use App\Models\Appointment;
 use App\Models\Client;
+use App\Models\Phone;
 use App\Models\Strutture;
 use App\Models\Strutturecap;
 use Carbon\Carbon;
@@ -26,23 +27,111 @@ class FrontController extends Controller
         ]);
     }
 
-    public function estrai(Request $request)
+    public function estraiuno(Request $request)
     {
-        $result = Client::select(['fullname', 'telefono', 'cap'])->where([
-            ['cap', $request->cap],
-            ['telefono', 'like', $request->telefono.'%'],
-        ])->get();
+        $result = Client::select(['tipo', 'fullname', 'telefono', 'indirizzo', 'citta', 'cap', 'strutture_id'])
+            ->where('cap', $request->cap)
+            ->when($request->tipo, fn ($query) => $query->where('tipo', $request->tipo))
+            ->when($request->telefono, fn ($query) => $query->where('telefono', 'like', $request->telefono.'%'))
+            ->get();
 
-        // Recupera tutti i fullname presenti in Appointment indietro di x mesi
-        $fullnamesInAppointments = Appointment::where('previsto', '>=', Carbon::now()->subMonths($request->mesiPassati))
-            ->pluck('fullname')->toArray();
+        if ($request->mesiPassati){
+            // Recupera tutti i fullname presenti in Appointment indietro di x mesi
+            $fullnamesInAppointments = Appointment::where('previsto', '>=', Carbon::now()->subMonths($request->mesiPassati))
+                ->pluck('fullname')->toArray();
 
-        // Rimuove dal risultato i clienti il cui fullname è già in Appointment
-        $result = $result->reject(function ($client) use ($fullnamesInAppointments) {
-            return in_array($client->fullname, $fullnamesInAppointments);
-        });
+            // Recupera tutti i fullname presenti in telefonate indietro di x mesi
+            $fullnamesInPhones = Phone::where('chiamato', '>=', Carbon::now()->subMonths($request->mesiPassati))
+                ->pluck('fullname')->toArray();
 
-        $file = Excel::download(new ClientsExport($result), 'clients.csv', \Maatwebsite\Excel\Excel::CSV);
+            // Rimuove dal risultato i clienti il cui fullname è già in Appointments
+            $result = $result->reject(function ($client) use ($fullnamesInAppointments) {
+                return in_array($client->fullname, $fullnamesInAppointments);
+            });
+
+            // Rimuove dal risultato i clienti il cui fullname è già in Phones
+            $result = $result->reject(function ($client) use ($fullnamesInPhones) {
+                return in_array($client->fullname, $fullnamesInPhones);
+            });
+        }
+
+        $file = Excel::download(new ClientsExport($result), 'estrai.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+
+        return $file->deleteFileAfterSend(false);
+    }
+
+    public function estraidue(Request $request)
+    {
+        $clients = Client::select('tipo', 'fullname', 'telefono', 'citta')
+            ->where([
+                ['tipo', $request->tipo],
+                ['citta', $request->citta],
+            ])
+            ->limit(500)->get();
+        $appointments = Appointment::select('fullname', 'esito', 'previsto')
+            ->where('previsto', '>', Carbon::now()->subMonth(2))
+            ->get();
+
+        $result = Gemini::geminiPro()->generateContent("Analizza i seguenti dati del database: la tabella " .
+            $clients->toJson(). " ed incrocia i dati con la tabella ". $appointments->toJson() .
+            ". Restituiscimi i primi ". $request->numero .
+            " elementi della tabella clients che non sono presenti nella tabella appointments: tipo, fullname, telefono, e città, di ogni record, in forma di tabella");
+
+        //dd($result->text());
+        // 1. Rimuovi la prima riga e le righe di separazione
+        $stringa = preg_replace('/\| Tipo \| Fullname \| Telefono \| Città \|\\n\|---\|---\|---\\n/', '', $result->text());
+        //dd($stringa);
+        // 2. Dividi la stringa in righe
+        $righe = explode("\n", $stringa);
+
+        // 3. Crea l'array
+        $dati = [];
+        foreach ($righe as $riga) {
+            $elementi = explode("|", $riga);
+            //dd($elementi);
+            $dati[] = [
+                'Tipo' => trim($elementi[1]),
+                'Fullname' => trim($elementi[2]),
+                'Telefono' => trim($elementi[3]),
+                'Città' => trim($elementi[4])
+            ];
+        }
+
+        // Chiama la view e gli passa i dati
+        return view('inizio', [
+            'dati' => $dati
+        ]);
+    }
+
+    public function estraitre(Request $request)
+    {
+        $result = Client::select(['tipo', 'fullname', 'telefono', 'indirizzo', 'citta', 'cap', 'strutture_id'])
+            ->where('strutture_id', $request->idStruttura)
+            ->when($request->tipo, fn ($query) => $query->where('tipo', $request->tipo))
+            ->when($request->telefono, fn ($query) => $query->where('telefono', 'like', $request->telefono.'%'))
+            ->get();
+
+        if ($request->mesiPassati) {
+            // Recupera tutti i fullname presenti in Appointment indietro di x mesi
+            $fullnamesInAppointments = Appointment::where('previsto', '>=', Carbon::now()->subMonths($request->mesiPassati))
+                ->pluck('fullname')->toArray();
+
+            // Recupera tutti i fullname presenti in telefonate indietro di x mesi
+            $fullnamesInPhones = Phone::where('chiamato', '>=', Carbon::now()->subMonths($request->mesiPassati))
+                ->pluck('fullname')->toArray();
+
+            // Rimuove dal risultato i clienti il cui fullname è già in Appointments
+            $result = $result->reject(function ($client) use ($fullnamesInAppointments) {
+                return in_array($client->fullname, $fullnamesInAppointments);
+            });
+
+            // Rimuove dal risultato i clienti il cui fullname è già in Phones
+            $result = $result->reject(function ($client) use ($fullnamesInPhones) {
+                return in_array($client->fullname, $fullnamesInPhones);
+            });
+        }
+
+        $file = Excel::download(new ClientsExport($result), 'estrai.xlsx', \Maatwebsite\Excel\Excel::XLSX);
 
         return $file->deleteFileAfterSend(false);
     }
@@ -77,7 +166,7 @@ class FrontController extends Controller
         ]);
     }
 
-    public function rispostaia(Request $request)
+    public function estraiquattro(Request $request)
     {
         // Validiamo l'input utente
         $validatedData = $request->validate([
@@ -101,49 +190,6 @@ class FrontController extends Controller
         // Chiama la view e gli passa i dati
         return view('inizio', [
             'response' => response()->json(['response' => $result])
-        ]);
-    }
-
-    public function rispostagemini(Request $request)
-    {
-        $clients = Client::select('tipo', 'fullname', 'telefono', 'citta')
-            ->where([
-                ['tipo', $request->tipo],
-                ['citta', $request->citta],
-            ])
-            ->limit(500)->get();
-        $appointments = Appointment::select('fullname', 'esito', 'previsto')
-            ->where('previsto', '>', Carbon::now()->subMonth(2))
-            ->get();
-
-        $result = Gemini::geminiPro()->generateContent("Analizza i seguenti dati del database: la tabella " .
-            $clients->toJson(). " ed incrocia i dati con la tabella ". $appointments->toJson() .
-                ". Restituiscimi i primi ". $request->numero .
-                " elementi della tabella clients che non sono presenti nella tabella appointments: tipo, fullname, telefono, e città, di ogni record, in forma di tabella");
-
-        //dd($result->text());
-        // 1. Rimuovi la prima riga e le righe di separazione
-        $stringa = preg_replace('/\| Tipo \| Fullname \| Telefono \| Città \|\\n\|---\|---\|---\\n/', '', $result->text());
-        //dd($stringa);
-        // 2. Dividi la stringa in righe
-        $righe = explode("\n", $stringa);
-
-        // 3. Crea l'array
-        $dati = [];
-        foreach ($righe as $riga) {
-        $elementi = explode("|", $riga);
-        //dd($elementi);
-        $dati[] = [
-            'Tipo' => trim($elementi[1]),
-            'Fullname' => trim($elementi[2]),
-            'Telefono' => trim($elementi[3]),
-            'Città' => trim($elementi[4])
-        ];
-    }
-
-        // Chiama la view e gli passa i dati
-        return view('inizio', [
-            'dati' => $dati
         ]);
     }
 

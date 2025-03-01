@@ -14,14 +14,19 @@ Route::get('/cellulari', [\App\Http\Controllers\FrontController::class, 'cellula
 Route::get('/capStrutture', [\App\Http\Controllers\FrontController::class, 'capStrutture'])->name('capStrutture');
 Route::get('/upload', [\App\Http\Controllers\UploadController::class, 'upload'])->name('upload');
 
-Route::post('/estrai', [\App\Http\Controllers\FrontController::class, 'estrai'])->name('estrai');
-Route::post('/rispostagemini', [\App\Http\Controllers\FrontController::class, 'rispostagemini'])->name('rispostagemini');
+Route::post('/estraiuno', [\App\Http\Controllers\FrontController::class, 'estraiuno'])->name('estraiuno');
+Route::post('/estraidue', [\App\Http\Controllers\FrontController::class, 'estraidue'])->name('estraidue');
+Route::post('/estraitre', [\App\Http\Controllers\FrontController::class, 'estraitre'])->name('estraitre');
+Route::post('/estraiquattro', [\App\Http\Controllers\FrontController::class, 'estraiquattro'])->name('estraiquattro');
 
 //------------------- upload --------------------------------//
 Route::post('/uploadAnagrafichePost', [\App\Http\Controllers\UploadController::class, 'uploadAnagrafichePost'])->name('uploadAnagrafichePost');
 Route::post('/uploadAppuntamentiPost', [\App\Http\Controllers\UploadController::class, 'uploadAppuntamentiPost'])->name('uploadAppuntamentiPost');
 Route::post('/uploadTelefonatePost', [\App\Http\Controllers\UploadController::class, 'uploadTelefonatePost'])->name('uploadTelefonatePost');
 Route::post('/uploadStrutturePost', [\App\Http\Controllers\UploadController::class, 'uploadStrutturePost'])->name('uploadStrutturePost');
+
+//------------------- caricaFile --------------------------------//
+Route::get('/caricaStrutture', [\App\Http\Controllers\UploadController::class, 'caricaStrutture'])->name('caricaStrutture');
 
 //------------------- verifiche ------------------------------//
 Route::get('/doppioni', [\App\Http\Controllers\FrontController::class, 'doppioni'])->name('doppioni');
