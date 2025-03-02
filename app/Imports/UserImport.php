@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
@@ -12,6 +13,12 @@ use Maatwebsite\Excel\Concerns\WithSkipDuplicates;
 
 class UserImport implements ToModel, WithSkipDuplicates, WithHeadingRow, WithBatchInserts, WithChunkReading
 {
+
+    public function __construct()
+    {
+        DB::table('users')->truncate();
+    }
+
     /**
     * @param array $row
     *

@@ -2,7 +2,7 @@
 
 namespace App\Imports;
 
-use App\Models\Prova;
+use App\Models\Proforma;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -12,14 +12,13 @@ use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithSkipDuplicates;
 
-class ProveImport implements ToModel, WithSkipDuplicates, WithHeadingRow, WithBatchInserts, WithChunkReading
+class ProformeImport implements ToModel, WithSkipDuplicates, WithHeadingRow, WithBatchInserts, WithChunkReading
 {
-
     protected $users; // Qui salviamo i dati della tabella Users
 
     public function __construct()
     {
-        DB::table('provas')->truncate();
+        DB::table('proformas')->truncate();
 
         // Leggiamo tutti i dati di Users una sola volta
         $this->users = User::all()->pluck('id', 'name');
@@ -33,18 +32,27 @@ class ProveImport implements ToModel, WithSkipDuplicates, WithHeadingRow, WithBa
     */
     public function model(array $row)
     {
-        preg_match('/^[A-Za-z]{2}\s+([\p{L}\'-]+(?:\s+[\p{L}\'-]+)*)\s+((?:[\p{L}\'-]+\s*)+)\s+\(ID:\s*(\d+)\)/u', $row['cliente_finale'], $matches);
+        if ($row['cliente_finale']){
+          //  preg_match('/^[A-Za-z]{2}\s+([\p{L}\'-]+(?:\s+[\p{L}\'-]+)*)\s+((?:[\p{L}\'-]+\s*)+)\s+\(ID:\s*(\d+)\)/u', $row['cliente_finale'], $matches1);
+            preg_match('/ID:(\d+)/', $row['cliente_finale'], $matches1);
+        }
+        if ($row['intermediario']){
+         //   preg_match('/^[A-Za-z]{2}\s+([\p{L}\'-]+(?:\s+[\p{L}\'-]+)*)\s+((?:[\p{L}\'-]+\s*)+)\s+\(ID:\s*(\d+)\)/u', $row['intermediario'], $matches2);
+            preg_match('/ID:(\d+)/', $row['intermediario'], $matches2);
+        }
 
         $UserName = $row['audioprotesista'];
 
         // Cerchiamo l'ID dello store basandoci sul nome
         $userId = $this->users[$UserName] ?? null;
 
-        return new Prova([
+        return new Proforma([
             'id'  => $row['id'],
-            'client_id'   => isset($matches[3]) ? trim($matches[3]) : null, // ID numerico estratto
+            'client_id'   => isset($matches1[1]) ? trim($matches1[1]) : null, // ID numerico estratto
+            'intermediario_id'   => isset($matches2[1]) ? trim($matches2[1]) : null, // ID numerico estratto
             'user_id' => $userId,
-            'contatto'  => $row['cliente_finale'],
+            'cliente_finale'  => $row['cliente_finale'],
+            'intermediario'  => $row['intermediario'],
             'stato'  => $row['stato_documento'],
             'dataDocumento'  => $row['data_documento'],
             'totale'  => $row['valore_totale'],

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Jobs\ImportAppointmentsJob;
 use App\Jobs\ImportClientsJob;
 use App\Jobs\importPhonesJob;
+use App\Jobs\ImportProformeJob;
 use App\Jobs\ImportProveJob;
 use App\Jobs\importStruttureJob;
 use App\Jobs\ImportUserJob;
@@ -15,8 +16,8 @@ class UploadController extends Controller
 {
     public function upload()
     {
-      //  return view('upload.upload');
-        return view('upload.caricaFile');
+        return view('upload.upload');
+      //  return view('upload.caricaFile');
     }
 
     public function uploadAnagrafichePost(Request $request)
@@ -86,6 +87,7 @@ class UploadController extends Controller
             new ImportAppointmentsJob(),
             new ImportUserJob(),
             new ImportProveJob(),
+            new ImportProformeJob(),
             new importPhonesJob(),
         ])->dispatch();
 

@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\Phone;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -11,6 +12,12 @@ use Maatwebsite\Excel\Concerns\WithSkipDuplicates;
 
 class PhoneImport implements ToModel, WithSkipDuplicates, WithHeadingRow, WithBatchInserts, WithChunkReading
 {
+
+    public function __construct()
+    {
+        DB::table('phones')->truncate();
+    }
+
     /**
     * @param array $row
     *

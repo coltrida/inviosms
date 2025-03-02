@@ -13,8 +13,11 @@ return new class extends Migration
     {
         Schema::create('proformas', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(\App\Models\Client::class);
+            $table->foreignIdFor(\App\Models\Client::class, 'intermediario_id')->nullable();
+            $table->foreignIdFor(\App\Models\Client::class, 'client_id')->nullable();
             $table->foreignIdFor(\App\Models\User::class);
+            $table->string('cliente_finale')->nullable();
+            $table->string('intermediario')->nullable();
             $table->string('stato')->nullable();
             $table->string('dataDocumento')->nullable();
             $table->float('totale')->nullable();

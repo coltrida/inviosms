@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\Appointment;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -12,6 +13,11 @@ use Maatwebsite\Excel\Concerns\WithSkipDuplicates;
 class AppointmentImport implements ToModel, WithSkipDuplicates, WithHeadingRow, WithBatchInserts, WithChunkReading
 {
     private $rows = 0;
+
+    public function __construct()
+    {
+        DB::table('appointments')->truncate();
+    }
 
     /**
     * @param array $row
@@ -32,9 +38,6 @@ class AppointmentImport implements ToModel, WithSkipDuplicates, WithHeadingRow, 
             return null; // Salta questa riga
         }*/
 
-        //dd($row);
-
-      //  preg_match('/^[A-Za-z]{2}\s+([\p{L}\'-]+(?:\s+[\p{L}\'-]+)*)\s+((?:[\p{L}\'-]+\s*)+)\s+\(ID:/u', $row['contatto'], $matches);
         preg_match('/^[A-Za-z]{2}\s+([\p{L}\'-]+(?:\s+[\p{L}\'-]+)*)\s+((?:[\p{L}\'-]+\s*)+)\s+\(ID:\s*(\d+)\)/u', $row['contatto'], $matches);
 
         return new Appointment([

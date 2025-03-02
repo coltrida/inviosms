@@ -23,6 +23,8 @@ class ClientImport implements ToModel, WithSkipDuplicates, WithHeadingRow, WithB
 
     public function __construct()
     {
+        DB::table('clients')->truncate();
+
         // Leggiamo tutti i dati di Store una sola volta
         $this->stores = Strutture::all()->pluck('id', 'nome');
         // pluck('id', 'name') -> restituisce un array associativo [ 'Nome Store' => ID ]
@@ -35,29 +37,27 @@ class ClientImport implements ToModel, WithSkipDuplicates, WithHeadingRow, WithB
     */
     public function model(array $row)
     {
-        // Verifica se il record esiste già nel database
-        /*$existingRecord = Client::where([
-                ['nome', $row['nome']],
-                ['cognome', $row['cognome']],
-                ['telefono', $row['numero_di_telefono']],
-            ])->first(); // Ad esempio, controlla per email*/
+        /*$existingRecord = Client::find($row['id']);
 
-        $existingRecord = Client::find($row['id']);
-
-        // Se il record esiste, ignora la riga
+        // Se il record esiste
         if ($existingRecord) {
-            return null; // Salta questa riga
-        }
+            // se il record esiste e la data updated_at è sempre la stessa
+            if ($existingRecord->updated_at == $row['aggiornato_il']){
+                return null; // Salta questa riga
+            } else {
+                // se il record esiste ma è cambiato qualcosa
+
+            }
+
+        }*/
 
         ++$this->rows;
 
         $storeName = $row['store'];
 
-
         // Cerchiamo l'ID dello store basandoci sul nome
         $storeId = $this->stores[$storeName] ?? null;
-        //dd($this->stores);
-        //dd($row);
+
         return new Client([
             'id'            => $row['id'],
             'tipo'          => $row['tipo'],
@@ -76,29 +76,6 @@ class ClientImport implements ToModel, WithSkipDuplicates, WithHeadingRow, WithB
             'strutture_id'  => $storeId,
         ]);
     }
-
-
-    /*public function collection(Collection $rows)
-    {
-        $data = [];
-
-        foreach ($rows as $row) {
-            $data[] = [
-                'nome'     => $row['nome'] ?? null,
-                'cognome'  => $row['cognome'] ?? null,
-                'email'    => $row['email'] ?? null,
-                'telefono' => $row['telefono'] ?? null,
-                'indirizzo'=> $row['indirizzo'] ?? null,
-                'citta'    => $row['citta'] ?? null,
-                'cap'      => $row['cap'] ?? null,
-                'provincia'=> $row['provincia'] ?? null,
-            ];
-            ++$this->rows;
-        }
-
-        // Inserisce tutti i dati in un'unica query
-        DB::table('clients')->insert($data);
-    }*/
 
     public function getRowCount(): int
     {

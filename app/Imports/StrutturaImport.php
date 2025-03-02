@@ -4,6 +4,7 @@ namespace App\Imports;
 
 use App\Models\Strutture;
 use App\Models\Strutturecap;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -12,6 +13,12 @@ use Maatwebsite\Excel\Concerns\WithSkipDuplicates;
 
 class StrutturaImport implements ToModel, WithSkipDuplicates, WithHeadingRow, WithBatchInserts, WithChunkReading
 {
+
+    public function __construct()
+    {
+        DB::table('struttures')->truncate();
+    }
+
     /**
     * @param array $row
     *
