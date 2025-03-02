@@ -2,19 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Imports\PhoneImport;
-use App\Imports\StrutturaImport;
 use App\Jobs\ImportAppointmentsJob;
 use App\Jobs\ImportClientsJob;
 use App\Jobs\importPhonesJob;
+use App\Jobs\ImportProveJob;
 use App\Jobs\importStruttureJob;
+use App\Jobs\ImportUserJob;
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\File;
-use Maatwebsite\Excel\Facades\Excel;
-use function PHPUnit\Framework\directoryExists;
-use function PHPUnit\Framework\fileExists;
 
 class UploadController extends Controller
 {
@@ -29,16 +24,12 @@ class UploadController extends Controller
         ini_set('max_execution_time', 600); // 5 minuti
         ini_set('memory_limit', '2048M');
 
-
         $file = $request->file('fileExcel');  // Carica il file
         $filePath = $file->store('temp'); // Salva temporaneamente il file
-        // dd(storage_path("app/private/$filePath"));
 
         ImportClientsJob::dispatch(storage_path("app/private/$filePath")); // Avvia il job in coda
 
         return back()->with('message', 'Importazione avviata! Sarai notificato al termine.');
-        //  session()->flash('message', $import->getRowCount());
-        //   return redirect()->back();
     }
 
     public function uploadAppuntamentiPost(Request $request)
@@ -52,11 +43,6 @@ class UploadController extends Controller
         ImportAppointmentsJob::dispatch(storage_path("app/private/$filePath")); // Avvia il job in coda
 
         return back()->with('message', 'Importazione avviata! Sarai notificato al termine.');
-
-        /*$import = new ClientImport;
-        Excel::import($import, $request->file('fileExcel'));
-        session()->flash('message', $import->getRowCount());
-        return redirect()->back();*/
     }
 
     public function uploadTelefonatePost(Request $request)
@@ -70,11 +56,6 @@ class UploadController extends Controller
         importPhonesJob::dispatch(storage_path("app/private/$filePath")); // Avvia il job in coda
 
         return back()->with('message', 'Importazione avviata! Sarai notificato al termine.');
-
-        /*$import = new ClientImport;
-        Excel::import($import, $request->file('fileExcel'));
-        session()->flash('message', $import->getRowCount());
-        return redirect()->back();*/
     }
 
     public function uploadStrutturePost(Request $request)
@@ -83,9 +64,7 @@ class UploadController extends Controller
         ini_set('memory_limit', '2048M');
 
         $file = $request->file('fileExcel');  // Carica il file
-        //dd($file);
         $filePath = $file->store('temp'); // Salva temporaneamente il file
-        //dd($filePath);
         importStruttureJob::dispatch(storage_path("app/private/$filePath")); // Avvia il job in coda
 
         return back()->with('message', 'Importazione avviata! Sarai notificato al termine.');
@@ -105,6 +84,8 @@ class UploadController extends Controller
             new importStruttureJob(),
             new ImportClientsJob(),
             new ImportAppointmentsJob(),
+            new ImportUserJob(),
+            new ImportProveJob(),
             new importPhonesJob(),
         ])->dispatch();
 
