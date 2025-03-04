@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Imports\UserImport;
+use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
@@ -12,7 +13,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ImportUserJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, \Illuminate\Bus\Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, \Illuminate\Bus\Queueable, SerializesModels, Batchable;
 
     public $timeout = 3600; // 1 ora
 

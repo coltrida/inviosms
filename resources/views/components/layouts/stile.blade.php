@@ -148,7 +148,7 @@
                     <a class="nav-link" href="{{route('verifiche')}}">Verifiche</a>
                 </li>
                    <li class="nav-item">
-                      <a class="nav-link" href="{{route('richiamare')}}">Da Richiamare</a>
+                      <a class="nav-link" href="{{route('richiamare')}}">PC Da Richiamare</a>
                   </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('clienti')}}">clienti</a>

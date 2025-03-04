@@ -56,7 +56,7 @@
             <tr>
                 <td>{{ $client->id }}</td>
                 <td style="width: 350px">{{ $client->tipo }}</td>
-                <td style="width: 370px">{{$client->strutture->nome}} </td>
+                <td style="width: 370px">{{$client->strutture?->nome}} </td>
                 <td style="width: 560px">{{ $client->fullname }}</td>
                 <td style="width: 250px">{{$client->telefono}} </td>
                 <td style="width: 690px">{{$client->indirizzo}} </td>

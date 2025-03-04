@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Events\ImportCompleted;
 use App\Imports\PhoneImport;
+use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
@@ -13,7 +14,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class importPhonesJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, \Illuminate\Bus\Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, \Illuminate\Bus\Queueable, SerializesModels, Batchable;
 
     public $timeout = 3600; // 1 ora
 
@@ -36,10 +37,6 @@ class importPhonesJob implements ShouldQueue
 
         Excel::import(new PhoneImport, storage_path('app/private/temp/tt.xlsx'));
 
-        $path = storage_path('app/private/temp');
-        \File::deleteDirectory($path);
 
-        // Emetti l'evento per il frontend
-        broadcast(new ImportCompleted());
     }
 }

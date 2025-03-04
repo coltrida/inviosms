@@ -81,14 +81,14 @@ class UploadController extends Controller
             \Storage::makeDirectory('/temp'); // Crea la directory se non esiste
         }
 
-        Bus::chain([
+        Bus::batch([
             new importStruttureJob(),
-            new ImportClientsJob(),
             new ImportAppointmentsJob(),
             new ImportUserJob(),
             new ImportProveJob(),
             new ImportProformeJob(),
             new importPhonesJob(),
+            new ImportClientsJob(),
         ])->dispatch();
 
         return back()->with('message', 'Importazione avviata! Sarai notificato al termine.');

@@ -219,28 +219,6 @@ class FrontController extends Controller
         return view('verifiche.verifiche');
     }
 
-    public function doppioni()
-    {
-        $duplicatedClients = Client::with('strutture')->whereIn(DB::raw('(nome, cognome, citta)'), function ($query) {
-            $query->selectRaw('nome, cognome, citta')
-                ->from('clients')
-                ->groupBy('nome', 'cognome', 'citta')
-                ->havingRaw('COUNT(*) > 1');
-        })->orderBy('strutture_id')->orderBy('citta')->orderBy('cognome')->get();
-
-        return view('verifiche.verifiche', [
-            'doppioni' => $duplicatedClients
-        ]);
-    }
-
-    public function senzaNumero()
-    {
-        return view('verifiche.verifiche', [
-            'senzaNumero' => Client::where('telefono', null)->orWhere('telefono', '0')->orWhere('telefono', '-')
-                ->orderBy('strutture_id')->orderBy('citta')->get()
-        ]);
-    }
-
     public function richiamare()
     {
         $dataLimite = Carbon::now()->subMonths(5);

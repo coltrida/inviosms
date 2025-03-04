@@ -18,12 +18,15 @@ return new class extends Migration
             $table->string('cognome')->nullable();
             $table->string('fullname')->nullable();
             $table->string('email')->nullable();
-            $table->string('telefono');
+            $table->string('telefono')->nullable();
+            $table->string('telefono2')->nullable();
             $table->string('indirizzo')->nullable();
             $table->string('citta')->nullable();
             $table->string('cap')->nullable();
             $table->string('provincia')->nullable();
-            $table->string('note')->nullable();
+            $table->text('note')->nullable();
+            $table->string('canalePrimario')->nullable();
+            $table->string('canaleSecondario')->nullable();
             $table->foreignIdFor(\App\Models\Strutture::class)->nullable();
             $table->timestamps();
         });

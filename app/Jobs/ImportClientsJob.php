@@ -3,6 +3,8 @@
 namespace App\Jobs;
 
 use App\Events\ImportCompleted;
+use App\Imports\ClientImportNuovo;
+use Illuminate\Bus\Batchable;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ClientImport;
 use Illuminate\Bus\Queueable;
@@ -14,9 +16,9 @@ use Illuminate\Queue\SerializesModels;
 
 class ImportClientsJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, \Illuminate\Bus\Queueable, SerializesModels, Batchable;
 
-    public $timeout = 3600; // 1 ora
+    public $timeout = 0; // 1 ora
 
     /**
      * Create a new job instance.
@@ -34,12 +36,13 @@ class ImportClientsJob implements ShouldQueue
         $originalPath = file_get_contents($path); // Leggi il contenuto del file
         file_put_contents(storage_path('app/private/temp/ii.xlsx'), $originalPath); // Scrivi nella destinazione
 
-        Excel::import(new ClientImport, storage_path("app/private/temp/ii.xlsx"));
+        Excel::import(new ClientImportNuovo, storage_path("app/private/temp/ii.xlsx"));
 
-        /*$path = storage_path('app/private/temp');
+        // Puliamo la cartella temporanea
+        $path = storage_path('app/private/temp');
         \File::deleteDirectory($path);
 
         // Emetti l'evento per il frontend
-        broadcast(new ImportCompleted());*/
+        broadcast(new ImportCompleted());
     }
 }

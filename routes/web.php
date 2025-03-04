@@ -2,7 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
-// ----- php artisan queue:work ------//
+// ----- php artisan queue:work               ------//
+// ----- php artisan queue:work --timeout=0   --------------- //
 
 Route::get('/', [\App\Http\Controllers\FrontController::class, 'inizio'])->name('inizio');
 
@@ -27,10 +28,6 @@ Route::post('/uploadStrutturePost', [\App\Http\Controllers\UploadController::cla
 
 //------------------- caricaFile --------------------------------//
 Route::get('/caricaStrutture', [\App\Http\Controllers\UploadController::class, 'caricaStrutture'])->name('caricaStrutture');
-
-//------------------- verifiche ------------------------------//
-Route::get('/doppioni', [\App\Http\Controllers\FrontController::class, 'doppioni'])->name('doppioni');
-Route::get('/senzaNumero', [\App\Http\Controllers\FrontController::class, 'senzaNumero'])->name('senzaNumero');
 
 //------------------- clienti ------------------------------//
 Route::get('/clientiAppuntamenti/{idClient}', [\App\Http\Controllers\FrontController::class, 'clientiAppuntamenti'])->name('clienti.appuntamenti');
