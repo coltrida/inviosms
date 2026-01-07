@@ -22,4 +22,14 @@ class Client extends Model
     {
         return $this->belongsTo(Strutture::class);
     }
+
+    public function proformas()
+    {
+        return $this->hasMany(Proforma::class);
+    }
+
+    public function intermediari()
+    {
+        return $this->hasMany(Proforma::class, 'intermediario_id');
+    }
 }

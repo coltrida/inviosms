@@ -14,6 +14,9 @@ class Verifiche extends Component
 {
     public $result;
     public $filialiConClientiSenzaAppuntamenti;
+    public $filialiConContattoChiamatoConAppuntamento;
+    public $filialiConClientSenzaProforma;
+    public $filialiConLeadConAppuntamenti;
 
     public function doppioni()
     {
@@ -50,9 +53,116 @@ class Verifiche extends Component
             ->get();
     }
 
+    public function contattoChiamatoConAppuntamento()
+    {
+        $this->filialiConContattoChiamatoConAppuntamento = Strutture::filiali()
+            ->with(['clients' => function($c) {
+                $c->where('tipo', 'Contatto Chiamato')
+                    ->whereHas('appointments', function($a) {
+                        $a->where('esito', 'Si è presentato');
+                    });
+            }])
+            ->get();
+    }
+
+    public function clientiNoProforma()
+    {
+        $this->filialiConClientSenzaProforma = Strutture::filiali()
+            ->with(['clients' => function($c) {
+                $c->where('tipo', 'Cliente')
+                    ->whereDoesntHave('proformas')
+                    ->whereDoesntHave('intermediari');
+            }])
+            ->get();
+    }
+
+    public function leadConAppuntamenti()
+    {
+        $this->filialiConLeadConAppuntamenti = Strutture::filiali()
+            ->with(['clients' => function($c) {
+                $c->where('tipo', 'Lead')
+                    ->whereHas('appointments', function($a) {
+                        $a->where('esito', 'Si è presentato');
+                    });
+            }])
+            ->get();
+    }
+
     public function esporta()
     {
         $file = Excel::download(new DoppioniExport($this->result), 'estrai.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+        return $file->deleteFileAfterSend(false);
+    }
+
+    public function esportaClientiNoAppuntamenti($idFiliale)
+    {
+        // Ricarica i dati prima di filtrare
+        $unMeseFa = Carbon::now()->subMonths(1);
+        $filialiConClienti = Strutture::filiali()
+            ->with(['clients' => function($c) use($unMeseFa){
+                $c->where('tipo', 'Cliente')
+                    ->whereDoesntHave('appointments', function($a) use($unMeseFa){
+                        $a->where('previsto', '>', $unMeseFa);
+                    });
+            }])
+            ->get();
+
+        $filialeDaStampare = $filialiConClienti->firstWhere('id', $idFiliale);
+
+        $file = Excel::download(new DoppioniExport($filialeDaStampare->clients), 'clientiNoAppuntamenti.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+        return $file->deleteFileAfterSend(false);
+    }
+
+    public function esportaContattoChiamatoConAppuntamento($idFiliale)
+    {
+        // Ricarica i dati prima di filtrare
+        $filialiConClienti = Strutture::filiali()
+            ->with(['clients' => function($c) {
+                $c->where('tipo', 'Contatto Chiamato')
+                    ->whereHas('appointments', function($a) {
+                        $a->where('esito', 'Si è presentato');
+                    });
+            }])
+            ->get();
+
+        $filialeDaStampare = $filialiConClienti->firstWhere('id', $idFiliale);
+
+        $file = Excel::download(new DoppioniExport($filialeDaStampare->clients), 'contattiChiamatiConAppuntamenti.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+        return $file->deleteFileAfterSend(false);
+    }
+
+    public function esportaLeadConAppuntamento($idFiliale)
+    {
+        // Ricarica i dati prima di filtrare
+        $filialiConClienti = Strutture::filiali()
+            ->with(['clients' => function($c) {
+                $c->where('tipo', 'Lead')
+                    ->whereHas('appointments', function($a) {
+                        $a->where('esito', 'Si è presentato');
+                    });
+            }])
+            ->get();
+
+        $filialeDaStampare = $filialiConClienti->firstWhere('id', $idFiliale);
+
+        $file = Excel::download(new DoppioniExport($filialeDaStampare->clients), 'leadConAppuntamenti.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+        return $file->deleteFileAfterSend(false);
+    }
+
+    public function esportaClientSenzaProforma($idFiliale)
+    {
+        // Ricarica i dati prima di filtrare
+        $filialiConClienti = Strutture::filiali()
+            ->with(['clients' => function($c) {
+                $c->where('tipo', 'Cliente')
+                    ->whereDoesntHave('proformas')
+                    ->whereDoesntHave('intermediari');
+            }])
+            ->get();
+
+        $filialeDaStampare = $filialiConClienti->firstWhere('id', $idFiliale);
+
+        $file = Excel::download(new DoppioniExport($filialeDaStampare->clients), 'clientiSenzaProforma.xlsx', \Maatwebsite\Excel\Excel::XLSX);
         return $file->deleteFileAfterSend(false);
     }
 

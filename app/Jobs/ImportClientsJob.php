@@ -6,9 +6,6 @@ use App\Events\ImportCompleted;
 use App\Imports\ClientImportNuovo;
 use Illuminate\Bus\Batchable;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Imports\ClientImport;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -46,3 +43,4 @@ class ImportClientsJob implements ShouldQueue
         broadcast(new ImportCompleted());
     }
 }
+

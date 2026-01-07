@@ -25,6 +25,7 @@
         <table class="table table-striped table-bordered mt-3" style="width: 1400px">
         <thead class="thead-dark">
         <tr>
+            <th scope="col">Azioni</th>
             <th scope="col">ID</th>
             <th scope="col">
                 <select wire:model.live="tipo" class="form-select" aria-label="Default select example">
@@ -48,20 +49,11 @@
             <th scope="col">indirizzo</th>
             <th scope="col">città</th>
             <th scope="col">cap</th>
-            <th scope="col">Azioni</th>
         </tr>
         </thead>
         <tbody>
         @foreach($clients as $client)
             <tr>
-                <td>{{ $client->id }}</td>
-                <td style="width: 350px">{{ $client->tipo }}</td>
-                <td style="width: 370px">{{$client->strutture?->nome}} </td>
-                <td style="width: 560px">{{ $client->fullname }}</td>
-                <td style="width: 250px">{{$client->telefono}} </td>
-                <td style="width: 690px">{{$client->indirizzo}} </td>
-                <td style="width: 370px">{{$client->citta}} </td>
-                <td style="width: 200px">{{$client->cap}} </td>
                 <td class="d-flex justify-content-between align-items-center" style="width: 120px">
                     <a href="{{route('clienti.appuntamenti', $client->id)}}" class="btn btn-primary position-relative" title="appuntamenti">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-journals" viewBox="0 0 16 16">
@@ -82,6 +74,14 @@
                         </span>
                     </a>
                 </td>
+                <td>{{ $client->id }}</td>
+                <td style="width: 350px">{{ $client->tipo }}</td>
+                <td style="width: 370px">{{$client->strutture?->nome}} </td>
+                <td style="width: 560px">{{ $client->fullname }}</td>
+                <td style="width: 250px">{{$client->telefono}} </td>
+                <td style="width: 690px">{{$client->indirizzo}} </td>
+                <td style="width: 370px">{{$client->citta}} </td>
+                <td style="width: 200px">{{$client->cap}} </td>
             </tr>
         @endforeach
         </tbody>

@@ -5,6 +5,7 @@ namespace App\Imports;
 use App\Jobs\ProcessClientRowJob;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -23,6 +24,7 @@ class ClientImportNuovo implements ToCollection, WithHeadingRow, WithChunkReadin
     {
         // Suddivide il file in blocchi da 100 righe
         foreach ($rows->chunk(500) as $chunk) {
+            Log::info($chunk);
             // Invia ogni blocco a un Job separato
             ProcessClientRowJob::dispatch($chunk);
         }
@@ -34,3 +36,4 @@ class ClientImportNuovo implements ToCollection, WithHeadingRow, WithChunkReadin
         return 1000;
     }
 }
+

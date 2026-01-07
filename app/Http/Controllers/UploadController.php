@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ImportCompleted;
 use App\Jobs\ImportAppointmentsJob;
 use App\Jobs\ImportClientsJob;
+use App\Jobs\ImportClientsJobOttimizzato;
 use App\Jobs\importPhonesJob;
 use App\Jobs\ImportProformeJob;
 use App\Jobs\ImportProveJob;
@@ -11,6 +13,7 @@ use App\Jobs\importStruttureJob;
 use App\Jobs\ImportUserJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Bus\Batch;
 
 class UploadController extends Controller
 {
@@ -85,12 +88,20 @@ class UploadController extends Controller
             new importStruttureJob(),
             new ImportAppointmentsJob(),
             new ImportUserJob(),
-            new ImportProveJob(),
             new ImportProformeJob(),
+            new ImportProveJob(),
             new importPhonesJob(),
-            new ImportClientsJob(),
-        ])->dispatch();
+            new ImportClientsJobOttimizzato(),
+        ])
+            // Funzione eseguita dopo che il batch è terminato (successo o fallimento)
+            ->then(function (Batch $batch) {
+                // Se sei all'interno di un Batch, l'evento di completamento dovrebbe essere gestito
+                // alla fine del Batch, non alla fine di ogni singolo Job.
+                broadcast(new ImportCompleted());
+            })
+            ->dispatch();
 
         return back()->with('message', 'Importazione avviata! Sarai notificato al termine.');
     }
 }
+

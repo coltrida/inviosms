@@ -9,6 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Client;
+use Illuminate\Support\Facades\Log;
 
 class ProcessClientRowJob implements ShouldQueue
 {
@@ -35,6 +36,7 @@ class ProcessClientRowJob implements ShouldQueue
         foreach ($this->rows as $row) {
 
             $storeName = $row['store'];
+            Log::info($storeName);
 
             // Cerchiamo l'ID dello store basandoci sul nome
             $storeId = $this->stores[$storeName] ?? null;

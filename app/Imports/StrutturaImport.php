@@ -37,13 +37,24 @@ class StrutturaImport implements ToModel, WithSkipDuplicates, WithHeadingRow, Wi
             'tipo'  => $row['tipo'],
         ]);
 
-        if ($row['cap']){
-            Strutturecap::create([
-                'strutture_id' => $row['id'],
-                'cap' => $row['cap']
-            ]);
-        }
+        /*if ($row['cap']){
+            Strutturecap::firstOrCreate(
+                ['strutture_id' => $row['id'], 'cap' => $row['cap']],
+            );
+        }*/
 
+        if ($row['cap']){
+            $exists = Strutturecap::where('strutture_id', $row['id'])
+                ->where('cap', $row['cap'])
+                ->exists();
+
+            if (!$exists) {
+                Strutturecap::create([
+                    'strutture_id' => $row['id'],
+                    'cap' => $row['cap']
+                ]);
+            }
+        }
 
         return $struttura;
     }

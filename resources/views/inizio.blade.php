@@ -5,9 +5,10 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="p-4 border">
+                        Estrai 1
                         <form action="{{route('estraiuno')}}" method="post">
                             @csrf
-                            <div class="row">
+                            <div class="row mt-3">
                                 <div class="col">
                                     tipo:
                                     <select name="tipo" class="form-select" aria-label="Default select example">
@@ -45,9 +46,10 @@
                 </div>
                 <div class="col-md-6">
                     <div class="p-4 border">
+                        Estrai 2
                         <form method="POST" action="{{route('estraidue')}}">
                             @csrf
-                            <div class="row">
+                            <div class="row mt-3">
                                 <div class="col">
                                     ChatGPT:
                                     <select name="numero" class="form-select" aria-label="Default select example">
@@ -81,9 +83,10 @@
             <div class="row mt-3">
                 <div class="col-md-6">
                     <div class="p-4 border">
+                        Estrai 3
                         <form action="{{route('estraitre')}}" method="post">
                             @csrf
-                            <div class="row">
+                            <div class="row mt-3">
                                 <div class="col">
                                     tipo:
                                     <select name="tipo" class="form-select" aria-label="Default select example">
@@ -118,6 +121,11 @@
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                         <option value="5">5</option>
+                                        <option value="5">6</option>
+                                        <option value="5">7</option>
+                                        <option value="5">8</option>
+                                        <option value="5">9</option>
+                                        <option value="mai">mai</option>
                                     </select>
                                 </div>
                             </div>
@@ -127,25 +135,41 @@
                 </div>
                 <div class="col-md-6">
                     <div class="p-4 border">
-                        <form method="POST" action="{{route('estraiquattro')}}">
+                        <livewire:home.Estraiquattro />
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <div class="p-4 border">
+                        Estrai 5 - acquisto da piu di...
+                        <form action="{{route('estraicinque')}}" method="post">
                             @csrf
-                            <div class="row">
+                            <div class="row mt-3">
+                                <div class="col">
+                                    tipo:
+                                    <select name="tipo" class="form-select" aria-label="Default select example">
+                                        <option value="Cliente" selected>CL</option>
+                                    </select>
+                                </div>
                                 <div class="col">
                                     filiale:
-                                    <select name="numero" class="form-select" aria-label="Default select example">
+                                    <select name="idStruttura" class="form-select" aria-label="Default select example">
                                         <option value="">filiale</option>
                                         @foreach($filiali as $filiale)
                                             <option value="{{$filiale->id}}">{{$filiale->nome}}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col">
-                                    Recapito:
-                                    <select name="tipo" class="form-select" aria-label="Default select example">
-                                        <option value="">Recapito</option>
-                                        @foreach($recapiti as $recapito)
-                                            <option value="{{$recapito->id}}">{{$recapito->nome}}</option>
-                                        @endforeach
+                                <div class="col-4">
+                                    piu di ... anni fa:
+                                    <select name="anni" class="form-select" aria-label="Default select example">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="more">piu di 5</option>
                                     </select>
                                 </div>
                             </div>
@@ -153,8 +177,23 @@
                         </form>
                     </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="p-4 border">
+                        <livewire:home.Estraisei />
+                    </div>
+                    <div class="p-4 border">
+                        <livewire:home.Estraisette />
+                    </div>
+                </div>
+
             </div>
         </div>
+
+        <livewire:home.VisualizzaEstraiquattro />
+
+        <livewire:home.VisualizzaEstraisei />
+
+        <livewire:home.VisualizzaEstraisette />
 
         <div id="answer">
             @if (isset($dati))

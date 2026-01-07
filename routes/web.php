@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 // ----- php artisan queue:work               ------//
 // ----- php artisan queue:work --timeout=0   --------------- //
+// ----- php artisan queue:listen --tries=3 --timeout=9000   --------------- //
 
 Route::get('/', [\App\Http\Controllers\FrontController::class, 'inizio'])->name('inizio');
 
@@ -18,7 +19,8 @@ Route::get('/upload', [\App\Http\Controllers\UploadController::class, 'upload'])
 Route::post('/estraiuno', [\App\Http\Controllers\FrontController::class, 'estraiuno'])->name('estraiuno');
 Route::post('/estraidue', [\App\Http\Controllers\FrontController::class, 'estraidue'])->name('estraidue');
 Route::post('/estraitre', [\App\Http\Controllers\FrontController::class, 'estraitre'])->name('estraitre');
-Route::post('/estraiquattro', [\App\Http\Controllers\FrontController::class, 'estraiquattro'])->name('estraiquattro');
+Route::post('/estraicinque', [\App\Http\Controllers\FrontController::class, 'estraicinque'])->name('estraicinque');
+//Route::get('/estraisei', [\App\Http\Controllers\FrontController::class, 'estraisei'])->name('estraisei');
 
 //------------------- upload --------------------------------//
 Route::post('/uploadAnagrafichePost', [\App\Http\Controllers\UploadController::class, 'uploadAnagrafichePost'])->name('uploadAnagrafichePost');

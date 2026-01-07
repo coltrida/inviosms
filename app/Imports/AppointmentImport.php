@@ -40,12 +40,23 @@ class AppointmentImport implements ToModel, WithSkipDuplicates, WithHeadingRow, 
 
         preg_match('/^[A-Za-z]{2}\s+([\p{L}\'-]+(?:\s+[\p{L}\'-]+)*)\s+((?:[\p{L}\'-]+\s*)+)\s+\(ID:\s*(\d+)\)/u', $row['contatto'], $matches);
 
+        $idClient = isset($matches[3]) ? trim($matches[3]) : null;
+
+        preg_match('/\(ID:(\d+)\)/', $row['contatto'], $matches2);
+        // $matches2[1] contiene il valore catturato dalle parentesi tonde (\d+)
+        $secondoTentativoEstrazioneIdClient = isset($matches2[1]) ? trim($matches2[1]) : null;
+
+
+        if (!$idClient && $secondoTentativoEstrazioneIdClient){
+            $idClient = $secondoTentativoEstrazioneIdClient;
+        }
+
         return new Appointment([
             'contatto'  => $row['contatto'],
-            'nome'      => isset($matches[1]) ? trim($matches[1]) : null, // Nome con lettere accentate
-            'cognome'   => isset($matches[2]) ? trim($matches[2]) : null, // Cognome con lettere accentate
-            'fullname'  => (isset($matches[2]) ? trim($matches[2]) : '') . ' ' . (isset($matches[1]) ? trim($matches[1]) : ''), // Cognome + Nome
-            'client_id'   => isset($matches[3]) ? trim($matches[3]) : null, // ID numerico estratto
+            'nome'      => isset($matches[2]) ? trim($matches[2]) : null, // Nome con lettere accentate
+            'cognome'   => isset($matches[1]) ? trim($matches[1]) : null, // Cognome con lettere accentate
+            'fullname'  => (isset($matches[1]) ? trim($matches[1]) : '') . ' ' . (isset($matches[2]) ? trim($matches[2]) : ''), // Cognome + Nome
+            'client_id'   => $idClient, // ID numerico estratto
             'tipo'      => $row['tipo'],
             'previsto'  => $row['previstoa_dalle_ore'],
             'esito'     => $row['modelsappointmentsfieldsappointment_result'],

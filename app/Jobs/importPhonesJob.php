@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Events\ImportCompleted;
 use App\Imports\PhoneImport;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -17,14 +16,6 @@ class importPhonesJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, \Illuminate\Bus\Queueable, SerializesModels, Batchable;
 
     public $timeout = 3600; // 1 ora
-
-    /**
-     * Create a new job instance.
-     */
-    public function __construct()
-    {
-
-    }
 
     /**
      * Execute the job.

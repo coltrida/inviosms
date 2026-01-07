@@ -15,6 +15,7 @@ class ClientsExport implements FromCollection, WithHeadings
     public function __construct($result)
     {
         $this->result = $result;
+        //dd($this->result[0]);
     }
 
     public function collection()
@@ -27,10 +28,15 @@ class ClientsExport implements FromCollection, WithHeadings
         return [
             'Tipo',
             'Full Name',
+            'Nome',
+            'Cognome',
             'Telefono',
             'indirizzo',
             'citta',
             'Cap',
+            'canale Primario',
+            'canale Secondario',
+            'creato il',
             'store_id'
         ];
     }
