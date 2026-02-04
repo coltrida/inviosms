@@ -187,6 +187,15 @@
                 </div>
 
             </div>
+
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <div class="p-4 border">
+                        <livewire:home.Estraiotto />
+                    </div>
+                </div>
+
+            </div>
         </div>
 
         <livewire:home.VisualizzaEstraiquattro />
@@ -194,6 +203,8 @@
         <livewire:home.VisualizzaEstraisei />
 
         <livewire:home.VisualizzaEstraisette />
+
+        <livewire:home.VisualizzaEstraiotto />
 
         <div id="answer">
             @if (isset($dati))

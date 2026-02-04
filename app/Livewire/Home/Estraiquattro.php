@@ -8,11 +8,13 @@ use Livewire\Component;
 class Estraiquattro extends Component
 {
     public $caps = [];
+    public $nomeRecapito;
 
     public function recapitoSelezionato($recapito)
     {
         $this->caps = [];
         $recapitoArray = json_decode($recapito, true);
+        $this->nomeRecapito = $recapitoArray['nome'];
         $caps = $recapitoArray['caps'];
         $capsArray = array_column($caps, 'cap');
         $this->caps = $capsArray;
@@ -20,7 +22,7 @@ class Estraiquattro extends Component
 
     public function visualizza()
     {
-        $this->dispatch('visualizzaCaps', caps: $this->caps);
+        $this->dispatch('visualizzaCaps', caps: $this->caps, nomeRecapito: $this->nomeRecapito);
     }
 
     public function render()

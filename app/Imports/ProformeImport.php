@@ -53,6 +53,7 @@ class ProformeImport implements ToModel, WithSkipDuplicates, WithHeadingRow, Wit
             'user_id' => $userId,
             'cliente_finale'  => $row['cliente_finale'],
             'intermediario'  => $row['intermediario'],
+            'tipo'  => $row['tipo_documento'],
             'stato'  => $row['stato_documento'],
             'dataDocumento'  => $row['data_documento'],
             'totale'  => $row['valore_totale'],

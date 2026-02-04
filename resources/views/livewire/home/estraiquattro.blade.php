@@ -1,5 +1,5 @@
 <div>
-    Estrai 4
+    Estrai 4 - non chiamati da 3 mesi
         <div class="row mt-3">
             <div class="col">
                 Recapito:

@@ -8,4 +8,9 @@ class Proforma extends Model
 {
     protected $guarded = [];
     protected $table = 'proformas';
+
+    public function interm()
+    {
+        return $this->belongsTo(Client::class, 'intermediario_id', 'id');
+    }
 }

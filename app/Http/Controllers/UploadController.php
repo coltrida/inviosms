@@ -6,6 +6,7 @@ use App\Events\ImportCompleted;
 use App\Jobs\ImportAppointmentsJob;
 use App\Jobs\ImportClientsJob;
 use App\Jobs\ImportClientsJobOttimizzato;
+use App\Jobs\ImportDisponibilitaJob;
 use App\Jobs\importPhonesJob;
 use App\Jobs\ImportProformeJob;
 use App\Jobs\ImportProveJob;
@@ -88,6 +89,7 @@ class UploadController extends Controller
             new importStruttureJob(),
             new ImportAppointmentsJob(),
             new ImportUserJob(),
+            new ImportDisponibilitaJob(),
             new ImportProformeJob(),
             new ImportProveJob(),
             new importPhonesJob(),

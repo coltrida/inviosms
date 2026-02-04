@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignIdFor(\App\Models\User::class);
             $table->string('cliente_finale')->nullable();
             $table->string('intermediario')->nullable();
+            $table->string('tipo')->nullable();
             $table->string('stato')->nullable();
             $table->string('dataDocumento')->nullable();
             $table->float('totale')->nullable();

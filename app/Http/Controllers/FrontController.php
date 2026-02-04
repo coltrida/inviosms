@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\AnagraficheExport;
 use App\Exports\ClientsExport;
 use App\Models\Appointment;
 use App\Models\Client;
@@ -24,7 +25,7 @@ class FrontController extends Controller
 
     public function estraiuno(Request $request)
     {
-        $result = Client::select(['tipo', 'fullname', 'telefono', 'indirizzo', 'citta', 'cap', 'canalePrimario', 'canaleSecondario', 'created_at', 'strutture_id'])
+        $result = Client::select(['id', 'tipo', 'nome', 'cognome', 'fullname', 'email', 'telefono', 'telefono2', 'indirizzo', 'citta', 'cap', 'provincia', 'note', 'canalePrimario', 'canaleSecondario', 'created_at', 'strutture_id'])
             ->where('cap', $request->cap)
             ->when($request->tipo, fn ($query) => $query->where('tipo', $request->tipo))
             ->when($request->telefono, fn ($query) => $query->where('telefono', 'like', $request->telefono.'%'))
@@ -50,7 +51,7 @@ class FrontController extends Controller
             });
         }
 
-        $file = Excel::download(new ClientsExport($result), 'estrai.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+        $file = Excel::download(new AnagraficheExport($result), 'estrai.xlsx', \Maatwebsite\Excel\Excel::XLSX);
 
         return $file->deleteFileAfterSend(false);
     }
